@@ -1,0 +1,81 @@
+﻿@page "/Shop"
+@using Contracts
+@using Entities
+@using System.Security.Claims
+@inject IProductService _productService
+@inject IOrderService _orderService
+@inject NavigationManager NavMgr
+
+
+  <h1 class="title">Bicyclest </h1>
+    <h4 class="motto">pedal as far as you can . .</h4>
+<nav>
+        @if (products == null)
+        {
+            <p>
+                <em>Loading...</em>
+            </p>
+        }
+        else if (!products.Any())
+        {
+            <p>
+                <em>Nobody here, please find some friends.</em>
+            </p>
+        }
+        else
+        {
+            int cont = 0;
+            @foreach (Product p in products)
+            {<!-- Alternative look"background-image: url(@p.url);background-size: cover; background-color: rgba(10,10,10,.5);background-blend-mode: overlay;" -->
+                <ul style="background-image: url(@p.url);background-size: contain; background-repeat: no-repeat;background-position: center;  background-color: rgba(10,10,10,.5);background-blend-mode: overlay;">
+                                     <p class="box">
+                                         <span>@p.name</span>
+                                         <br/>
+                                         <strong class="subtitle">@p.value kr</strong>
+                                         <br/>
+                                         <strong class="content">@p.description</strong>
+                                         <br/>
+                                            <AuthorizeView>
+                                                <Authorized>
+                                                    <button @onclick="()=>AddToCart(p)">Add to cart</button>
+                                                </Authorized>
+                                                <NotAuthorized>
+                                                   <a href="Login"><button>Log-in to buy</button></a>
+                                                </NotAuthorized>
+                                            </AuthorizeView>
+                                     </p>
+                                 </ul>
+            }
+
+        }
+</nav>
+
+
+
+
+@code {
+    private IList<Product> products;
+    private IList<Order> orders;
+    private Order cart;
+    protected override async Task OnInitializedAsync()
+    {
+        products = await _productService.GetProductsAsync();
+        
+    }
+
+    //This method assumes the orders are filtered to match the currently logged user 
+    private async void AddToCart(Product product)
+    {
+        orders = await _orderService.GetAllOrdersAsync();
+        foreach (Order o in orders)
+        {
+            if (!o.iscompleted)
+            {
+                //In case of non filtered order list use Claims to get current user ID
+                //if(o.clientId == clientId){ _productService.AddProductToCart(product, o.orderId); }
+                await _productService.AddProductToCart(product, o.orderId);
+                break;
+            }
+        }
+    }
+}

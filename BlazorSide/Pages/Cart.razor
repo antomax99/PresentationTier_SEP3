@@ -1,0 +1,73 @@
+﻿@page "/Cart"
+@using Entities
+@using Contracts
+@using System.Collections
+@inject IOrderService orderService
+
+<AuthorizeView>
+<Authorized>
+
+<!--TODO: Add order history at the bottom -->
+@if (orders == null)
+{
+    <p>
+        <em>Loading...</em>
+    </p>
+}
+else if (orders.Count==0)
+{
+    <p>
+        <em>No orders exist.</em>
+    </p>
+}
+else
+{
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Name</th> <th>Description</th> <th>Price</th> <th>Size:l|w|h</th> <th>Remove</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (Order o in orders)
+        {
+            if (!o.iscompleted)
+            {
+                foreach (Product p in o._products)
+                {
+                    <tr>
+                        <td>@p.name</td> <td>@p.description</td> <td>@p.value</td> <td>@p.length|@p.width|@p.height</td>
+                        <td><button @onclick="()=>RemoveProductFromOrder(o,p)">X</button></td>
+                    </tr>
+                }
+                <button class="button" @onclick="()=>Purchase(o)">Pruchase</button>
+                break;
+            }
+        }
+        </tbody>
+    </table>
+}
+</Authorized>
+<NotAuthorized>
+    Not logged in? Click <a href="Login">here</a> to login
+</NotAuthorized>
+</AuthorizeView>
+
+@code {
+    private IList<Order> orders;
+
+    private async Task RemoveProductFromOrder(Order order, Product product)
+    {
+        order._products.Remove(product);
+       await orderService.UpdateOrderAsync(order);
+    }
+    private async Task Purchase(Order order)
+    {
+        await orderService.RequestPurchase(order);
+        //TODO: Create landing page for customer who made a purchase
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        orders = await orderService.GetAllOrdersAsync();
+    }
+}

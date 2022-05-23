@@ -1,0 +1,56 @@
+@page "/AdminOrders"
+@inject IOrderService orderService
+@using Entities
+@using Contracts
+<h3>AdminOrders</h3>
+@if (orders == null)
+{
+    <p>
+        <em>Loading...</em>
+    </p>
+}
+else if (orders.Count==0)
+{
+    <p>
+        <em>No orders exist.</em>
+    </p>
+}
+else
+{
+    <table class="table">
+        <thead>
+        <tr>
+            <th>orderId</th> <th>clientId</th> <th>Value</th> <th>Completed</th><th>Change status</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (Order o in orders)
+        {
+            <tr>
+                <td>@o.orderId</td> <td>@o.clientId</td><td>@o.Value</td> <td>@if(o.iscompleted){<samp>Yes</samp>}else{<samp>No</samp>}</td>
+                <td><button class="buttonC" @onclick="()=>ChangeStatus(o)">Change</button></td>
+            </tr>
+        }
+        </tbody>
+    </table>
+    <button class="button" @onclick="()=>CommitChanges()">Commit Changes</button>
+}
+@code {
+    private IList<Order> orders;
+    private async Task ChangeStatus(Order order)
+    {
+        order.iscompleted =! order.iscompleted;
+    }
+    private async Task CommitChanges()
+    {
+        //TODO: Make changes only to the orders that were changed
+        foreach (Order o in orders)
+        {
+            await orderService.UpdateOrderAsync(o);
+        }
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        orders = await orderService.GetAllOrdersAsync();
+    }
+}
