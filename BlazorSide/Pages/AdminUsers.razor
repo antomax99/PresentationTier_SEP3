@@ -3,7 +3,6 @@
 @using Contracts
 @inject IUserService UserServe
 @inject NavigationManager NavMgr
-<h3>AdminUsers</h3>
 <AuthorizeView>
     <Authorized>
 
@@ -21,26 +20,46 @@
         }
         else
         {
-    
-            <table class="table">
-                <thead>
-                <tr>
-                    <th>Username</th> <th>Password</th> <th>Email</th> <th>Password</th> <th>ID</th>
-                </tr>
-                </thead>
-                <tbody>
-                @foreach (User u in users)
-                {
-                    <tr>
-                        <td>@u.username</td> 
-                        <td>@u.password</td> 
-                        <td>@u.email</td>
-                        <td>@u.firstName</td>
-                        <td id="UserID">@u.userId</td>
-                    </tr>
+            
+            <div class="container">
+                <ul class="responsive-table">
+                    <li class="table-header">
+                                         <div class="col col-1">Username<input type="text" minlength="3" maxlength="32" @bind="@newUserItem.userName" @oninput="@((e) => { newUserItem.userName=(string)e.Value;})" /></div>
+                                         <div class="col col-2">Password<input type="text" minlength="3" maxlength="32" @bind="@newUserItem.password" @oninput="@((e) => { newUserItem.password=(string)e.Value;})" /></div>
+                                         <div class="col col-3">FirsName<input type="text" minlength="3" maxlength="32" @bind="@newUserItem.firstName" @oninput="@((e) => { newUserItem.firstName=(string)e.Value;})" /></div>
+                                         <div class="col col-4">LastName<input type="text" minlength="3" maxlength="32" @bind="@newUserItem.lastName" @oninput="@((e) => { newUserItem.lastName=(string)e.Value;})" /></div>
+                                         <div class="col col-5">Email<input type="text" minlength="6" maxlength="128" @bind="@newUserItem.email" @oninput="@((e) => { newUserItem.email=(string)e.Value;})" /></div>
+                                         <div class="col col-6">Security<input type="number" max="11" @bind="@newUserItem.SecurityLevel" @oninput="@((e) => { newUserItem.SecurityLevel=Convert.ToInt32(e.Value);})" /></div>
+                                         <div id="UserID" class="col col-7" >UserID<input type="number" @bind="@newUserItem.userId" @oninput="@((e) => { newUserItem.userId=Convert.ToInt32(e.Value);})" /></div>
+                                         <div class="col col-8">
+                                            <p class="actions">
+                                                        <button class="button" type="submit" @onclick="()=>UpdateUser(newUserItem)" ><span>Change</span></button>
+                                                    </p>
+                                         </div>
+                                     </li>
+     
+
+                    
+
+                @foreach (User TableUser in users)
+                {                   
+                    <li class="table-row" @onclick="()=>SelectUser(TableUser)">
+                                        <div class="col col-1">@TableUser.userName</div>
+                                        <div class="col col-2">@TableUser.password</div>
+                                        <div class="col col-3">@TableUser.firstName</div>
+                                        <div class="col col-4">@TableUser.lastName</div>
+                                        <div class="col col-5">@TableUser.email</div>
+                                        <div class="col col-6">@TableUser.SecurityLevel</div>
+                                        <div id="UserID" class="col col-7" >@TableUser.userId</div>
+                                        <div class="col col-8">
+                                            <p class="actions">
+                                                <button class="buttonD" @onclick="() => RemoveUser(TableUser.userId)"><span>x</span></button>
+                                            </p>
+                                        </div>
+                                    </li>
                 }
-                </tbody>
-            </table>
+                </ul>
+            </div>
         }
 
     </Authorized>
@@ -51,10 +70,24 @@
 @code {
         
     private IList<User> users;
+    private User newUserItem = new User();
 
     protected override async Task OnInitializedAsync()
     {
         users = await UserServe.GetAsync();
     }
-
+    private void SelectUser(User SelectedUser)
+    {
+        newUserItem = SelectedUser;
+    }
+    private async Task RemoveUser(int userId)
+    {
+        await UserServe.DeleteAsync(userId);
+        NavMgr.NavigateTo("/AdminUsers",true);
+    }
+    private async Task UpdateUser(User toBeUpdated)
+    {
+        await UserServe.UpdateAsync(toBeUpdated);
+        NavMgr.NavigateTo("/AdminUsers",true);
+    }
 }

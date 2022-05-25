@@ -8,11 +8,11 @@ namespace RESTClient;
 
 public class UserHttpClientImpl :IUserService
 {
-    
+    private readonly int APPLICATION_IP=8080;
     public async Task<IList<User>> GetAsync()
     {
         using HttpClient client = new ();
-        HttpResponseMessage response = await client.GetAsync("http://localhost:8080/users");
+        HttpResponseMessage response = await client.GetAsync($"http://localhost:{APPLICATION_IP}/users");
         string content = await response.Content.ReadAsStringAsync();
 
         if (!response.IsSuccessStatusCode)
@@ -32,7 +32,7 @@ public class UserHttpClientImpl :IUserService
     {
         using HttpClient client = new();
         
-        HttpResponseMessage response = await client.GetAsync($"http://localhost:8080/login/{username}");
+        HttpResponseMessage response = await client.GetAsync($"http://localhost:{APPLICATION_IP}/login/{username}");
         ValidateContent(response);
         string responseContent = await response.Content.ReadAsStringAsync();
         
@@ -48,7 +48,7 @@ public class UserHttpClientImpl :IUserService
     public async Task<User> GetUserById(int id)
     {
         using HttpClient client = new ();
-        HttpResponseMessage response = await client.GetAsync($"http://localhost:8080/users/{id}");
+        HttpResponseMessage response = await client.GetAsync($"http://localhost:{APPLICATION_IP}/users/{id}");
         string content = await response.Content.ReadAsStringAsync();
 
         if (!response.IsSuccessStatusCode)
@@ -76,26 +76,28 @@ public class UserHttpClientImpl :IUserService
 
         StringContent usercontent = new(UserAsJson, Encoding.UTF8, "application/json");
         
-        HttpResponseMessage response = await client.PostAsync($"http://localhost:8080/users/add",usercontent);
-        string content = await response.Content.ReadAsStringAsync();
-
-        if (!response.IsSuccessStatusCode)
+        HttpResponseMessage response = await client.PostAsync($"http://localhost:{APPLICATION_IP}/users/add",usercontent);
+       
+        
+        try
         {
-            throw new Exception($"Error: {response.StatusCode}, {content}");
+            string content = await response.Content.ReadAsStringAsync();
+            string? returned = JsonSerializer.Deserialize<String>(content);
+            Console.WriteLine("AddUserAsync returned: " + returned); //Console line
         }
-        User returned = JsonSerializer.Deserialize<User>(content, new JsonSerializerOptions
+        catch (Exception e)
         {
-            PropertyNameCaseInsensitive = true
-        })!;
-        
-        Console.WriteLine("AddUserAsync returned: " + returned); //Console line
-        
+            Console.WriteLine(e);
+            throw;
+        }
+
+
     }
 
     public async Task DeleteAsync(int id)
     {
         using HttpClient client = new ();
-        HttpResponseMessage response = await client.GetAsync($"http://localhost:8080/users/{id}");
+        HttpResponseMessage response = await client.DeleteAsync($"http://localhost:{APPLICATION_IP}/users/{id}/delete");
         string content = await response.Content.ReadAsStringAsync();
 
         if (!response.IsSuccessStatusCode)
@@ -115,9 +117,9 @@ public class UserHttpClientImpl :IUserService
         string UserAsJson = JsonSerializer.Serialize(user,options);
         StringContent usercontent = new(UserAsJson, Encoding.UTF8, "application/json");
         
-        HttpResponseMessage response = await client.PostAsync($"http://localhost:8080/users/update",usercontent);
+        HttpResponseMessage response = await client.PutAsync($"http://localhost:{APPLICATION_IP}/users/update",usercontent);
         string content = await response.Content.ReadAsStringAsync();
-
+        /*
         if (!response.IsSuccessStatusCode)
         {
             throw new Exception($"Error: {response.StatusCode}, {content}");
@@ -128,6 +130,7 @@ public class UserHttpClientImpl :IUserService
         })!;
         
         Console.WriteLine("UpdateAsync returned: " + returned); //Console line
+        */
     }
     
     public HttpContent ValidateContent(HttpResponseMessage response)

@@ -96,7 +96,7 @@ public class AuthServiceImpl : IAuthService
         // this is (probably) the only method, which needs modifying for your own user type
         List<Claim> claims = new()
         {
-            new Claim(ClaimTypes.Name, user.username),
+            new Claim(ClaimTypes.Name, user.userName),
             new Claim("SecurityLevel", user.SecurityLevel.ToString()),
 
         };

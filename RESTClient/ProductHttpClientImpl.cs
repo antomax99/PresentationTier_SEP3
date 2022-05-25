@@ -7,10 +7,11 @@ namespace RESTClient;
 
 public class ProductHttpClientImpl : IProductService
 {
+    private readonly int APPLICATION_IP=2172;
     public async Task<IList<Product>> GetProductsAsync()
     {
         using HttpClient client = new ();
-        HttpResponseMessage response = await client.GetAsync("http://localhost:9292/products");
+        HttpResponseMessage response = await client.GetAsync($"http://localhost:{APPLICATION_IP}/products");
         string content = await response.Content.ReadAsStringAsync();
 
         if (!response.IsSuccessStatusCode)
@@ -29,7 +30,7 @@ public class ProductHttpClientImpl : IProductService
     public async Task<Product> GetProductById(int id)
     {
         using HttpClient client = new ();
-        HttpResponseMessage response = await client.GetAsync($"http://localhost:9292/id/{id}/product");
+        HttpResponseMessage response = await client.GetAsync($"http://localhost:{APPLICATION_IP}/id/{id}/product");
         string content = await response.Content.ReadAsStringAsync();
 
         if (!response.IsSuccessStatusCode)
@@ -57,7 +58,7 @@ public class ProductHttpClientImpl : IProductService
 
         StringContent usercontent = new(UserAsJson, Encoding.UTF8, "application/json");
         
-        HttpResponseMessage response = await client.PostAsync($"http://localhost:9292/product/add",usercontent);
+        HttpResponseMessage response = await client.PostAsync($"http://localhost:{APPLICATION_IP}/product/add",usercontent);
         string content = await response.Content.ReadAsStringAsync();
 
         if (!response.IsSuccessStatusCode)
@@ -75,7 +76,7 @@ public class ProductHttpClientImpl : IProductService
     public async Task DeleteProductAsync(int id)
     {
         using HttpClient client = new ();
-        HttpResponseMessage response = await client.GetAsync($"http://localhost:9292/id/{id}/product/remove");
+        HttpResponseMessage response = await client.GetAsync($"http://localhost:{APPLICATION_IP}/id/{id}/product/remove");
         string content = await response.Content.ReadAsStringAsync();
 
         if (!response.IsSuccessStatusCode)
@@ -95,7 +96,7 @@ public class ProductHttpClientImpl : IProductService
         string productAsJson = JsonSerializer.Serialize(product,options);
         StringContent postcontent = new(productAsJson, Encoding.UTF8, "application/json");
         
-        HttpResponseMessage response = await client.PatchAsync($"http://localhost:9292/product/update",postcontent);
+        HttpResponseMessage response = await client.PatchAsync($"http://localhost:{APPLICATION_IP}/product/update",postcontent);
         string content = await response.Content.ReadAsStringAsync();
 
         if (!response.IsSuccessStatusCode)
@@ -122,7 +123,7 @@ public class ProductHttpClientImpl : IProductService
 
         StringContent usercontent = new(UserAsJson, Encoding.UTF8, "application/json");
         
-        HttpResponseMessage response = await client.PostAsync($"http://localhost:9292/product/{orderId}/addtocart",usercontent);
+        HttpResponseMessage response = await client.PostAsync($"http://localhost:{APPLICATION_IP}/product/{orderId}/addtocart",usercontent);
         string content = await response.Content.ReadAsStringAsync();
 
         if (!response.IsSuccessStatusCode)

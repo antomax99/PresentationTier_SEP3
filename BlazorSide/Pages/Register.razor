@@ -1,0 +1,93 @@
+@page "/Register"
+@using Entities
+@using Contracts
+@inject IUserService UserService
+@inject NavigationManager NavMgr
+<PageTitle>Register</PageTitle>
+<h3>Register</h3>
+<div class='tabs'>
+	
+	<div class="section section-1" id='tab-1'>
+		<div class="container-1"></div>
+		<div class="background-color-1">
+			<div class="shape-1"></div>
+			<div class="shape-2"></div>
+			<div class="shape-3"></div>
+			<div class="shape-4"></div>
+			<div class="shape-5"></div>
+			<div class="shape-6"></div>
+		</div>
+	</div></div>
+<EditForm Model="@newUserItem" OnValidSubmit="@AddNewUser">
+    <DataAnnotationsValidator/> 
+    <ValidationSummary/>
+    <div class="box">
+        <div class="form-group">
+            <span>
+                <label>Username:</label><br/>
+            </span>
+            <span>
+                <InputTextArea  @bind-Value="newUserItem.userName"/>
+            </span>
+        </div>
+        <div class="form-group">
+            <span>
+                <label>Password:</label><br/>
+            </span>
+            <span>
+                <InputTextArea  @bind-Value="newUserItem.password"/>
+            </span>
+        </div>
+        <div class="form-group">
+            <span>
+                <label>FirstName:</label><br/>
+            </span>
+            <span>
+                <InputTextArea  @bind-Value="newUserItem.firstName"/>
+            </span>
+        </div>
+                <div class="form-group">
+                    <span>
+                        <label>LastName:</label><br/>
+                    </span>
+                    <span>
+                        <InputTextArea  @bind-Value="newUserItem.lastName"/>
+                    </span>
+                </div>
+        <div class="form-group">
+            <span>
+                <label>Email:</label><br/>
+            </span>
+            <span>
+                <InputTextArea rows="4" @bind-Value="newUserItem.email"/>
+            
+            </span>
+        </div>
+        <p class="actions">
+            <button class="button" type="submit"><span>Create</span></button>
+        </p>
+    </div>
+</EditForm>
+<label>@errorLabel</label>
+@code {
+    private User newUserItem = new User();
+    private string errorLabel;
+    public bool isAdmin = false;
+    private async Task AddNewUser()
+    {
+        errorLabel = "";
+        try
+        {
+            //Very basic TODO: Move check to double check in application (T2)
+            newUserItem.SecurityLevel = isAdmin ? 10 : 1;
+            await UserService.AddUserAsync(newUserItem);
+        }
+        catch (Exception e)
+        {
+            errorLabel = e.Message;
+            return;
+        }
+        
+        NavMgr.NavigateTo("/Login");
+    }
+}

@@ -10,10 +10,11 @@ namespace RESTClient;
 
 public class OrderHttpClientImpl : IOrderService
 {
+    private readonly int APPLICATION_IP=2172;
     public async Task<IList<Order>> GetAllOrdersAsync()
     {
         using HttpClient client = new ();
-        HttpResponseMessage response = await client.GetAsync("http://localhost:9292/orders");
+        HttpResponseMessage response = await client.GetAsync($"http://localhost:{APPLICATION_IP}/orders");
         string content = await response.Content.ReadAsStringAsync();
 
         if (!response.IsSuccessStatusCode)
@@ -32,7 +33,7 @@ public class OrderHttpClientImpl : IOrderService
     {
         
         using HttpClient client = new ();
-        HttpResponseMessage response = await client.GetAsync($"http://localhost:9292/{id}/order");
+        HttpResponseMessage response = await client.GetAsync($"http://localhost:{APPLICATION_IP}/{id}/order");
         string content = await response.Content.ReadAsStringAsync();
 
         if (!response.IsSuccessStatusCode)
@@ -61,7 +62,7 @@ public class OrderHttpClientImpl : IOrderService
 
         StringContent postcontent = new(orderAsJson, Encoding.UTF8, "application/json");
 
-        HttpResponseMessage response = await client.PostAsync($"http://localhost:9292/order/add",postcontent);
+        HttpResponseMessage response = await client.PostAsync($"http://localhost:{APPLICATION_IP}/order/add",postcontent);
         string content = await response.Content.ReadAsStringAsync();
 
         if (!response.IsSuccessStatusCode)
@@ -78,7 +79,7 @@ public class OrderHttpClientImpl : IOrderService
     public async Task DeleteOrderByIdAsync(int id)
     {
         using HttpClient client = new ();
-        HttpResponseMessage response = await client.GetAsync($"http://localhost:9292/Order/{id}");
+        HttpResponseMessage response = await client.GetAsync($"http://localhost:{APPLICATION_IP}/Order/{id}");
         string content = await response.Content.ReadAsStringAsync();
 
         if (!response.IsSuccessStatusCode)
@@ -98,7 +99,7 @@ public class OrderHttpClientImpl : IOrderService
         string orderAsJson = JsonSerializer.Serialize(order,options);
         StringContent postcontent = new(orderAsJson, Encoding.UTF8, "application/json");
         
-        HttpResponseMessage response = await client.PatchAsync($"http://localhost:9292/order/update",postcontent);
+        HttpResponseMessage response = await client.PatchAsync($"http://localhost:{APPLICATION_IP}/order/update",postcontent);
         string content = await response.Content.ReadAsStringAsync();
 
         if (!response.IsSuccessStatusCode)
@@ -125,7 +126,7 @@ public class OrderHttpClientImpl : IOrderService
 
         StringContent postcontent = new(orderAsJson, Encoding.UTF8, "application/json");
 
-        HttpResponseMessage response = await client.PostAsync($"http://localhost:9292/order/purchase",postcontent);
+        HttpResponseMessage response = await client.PostAsync($"http://localhost:{APPLICATION_IP}/order/purchase",postcontent);
         string content = await response.Content.ReadAsStringAsync();
 
         if (!response.IsSuccessStatusCode)
