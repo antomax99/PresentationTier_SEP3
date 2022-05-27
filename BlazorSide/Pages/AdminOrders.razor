@@ -1,56 +1,88 @@
 @page "/AdminOrders"
 @inject IOrderService orderService
+@inject NavigationManager NavMgr
 @using Entities
 @using Contracts
-<h3>AdminOrders</h3>
-@if (orders == null)
-{
-    <p>
-        <em>Loading...</em>
-    </p>
-}
-else if (orders.Count==0)
-{
-    <p>
-        <em>No orders exist.</em>
-    </p>
-}
-else
-{
-    <table class="table">
-        <thead>
-        <tr>
-            <th>orderId</th> <th>clientId</th> <th>Value</th> <th>Completed</th><th>Change status</th>
-        </tr>
-        </thead>
-        <tbody>
-        @foreach (Order o in orders)
+<AuthorizeView>
+    <Authorized>
+
+        @if (orders == null)
         {
-            <tr>
-                <td>@o.orderId</td> <td>@o.clientId</td><td>@o.Value</td> <td>@if(o.iscompleted){<samp>Yes</samp>}else{<samp>No</samp>}</td>
-                <td><button class="buttonC" @onclick="()=>ChangeStatus(o)">Change</button></td>
-            </tr>
+            <p>
+                <em>Loading...</em>
+            </p>
         }
-        </tbody>
-    </table>
-    <button class="button" @onclick="()=>CommitChanges()">Commit Changes</button>
-}
+        else if (!orders.Any())
+        {
+            <p>
+                <em>Nobody here, please find some friends.</em>
+            </p>
+        }
+        else
+        {
+            
+            <div class="container">
+                <ul class="responsive-table">
+                    <li class="table-header">
+                                         <div class="col col-1">Username<input type="text" minlength="3" maxlength="32" @bind="@newOrderItem.orderId" @oninput="@((e) => { newOrderItem.orderId=Convert.ToInt32(e.Value);})" /></div>
+                                         <div class="col col-2">Password<input type="text" minlength="3" maxlength="32" @bind="@newOrderItem.customerId" @oninput="@((e) => { newOrderItem.customerId=Convert.ToInt32(e.Value);})" /></div>
+                                         <div class="col col-3">FirsName<input type="text" minlength="3" maxlength="32" @bind="@newOrderItem.price" @oninput="@((e) => { newOrderItem.price=Convert.ToInt32(e.Value);})" /></div>
+                                        <!-- <div class="col col-4">LastName<input type="" minlength="3" maxlength="32" @bind="@newOrderItem.isCompleted" @oninput="@((e) => { newOrderItem.isCompleted=(bool)e.Value;})" /></div>-->
+
+                                         <div class="col col-8">
+                                            <p class="actions">
+                                                        <button class="button" type="submit" @onclick="()=>UpdateUser(newOrderItem)" ><span>Change</span></button>
+                                                    </p>
+                                         </div>
+                                     </li>
+     
+
+                    
+
+                @foreach (Order TableOrder in orders)
+                {                   
+                    <li class="table-row" @onclick="()=>SelectOrder(TableOrder)">
+                                        <div class="col col-1">@TableOrder.orderId</div>
+                                        <div class="col col-2">@TableOrder.customerId</div>
+                                        <div class="col col-3">@TableOrder.price</div>
+                                        <div class="col col-4">@TableOrder.isCompleted</div>
+
+                                        <div class="col col-8">
+                                            <p class="actions">
+                                                <button class="buttonD" @onclick="() => RemoveOrder(TableOrder.orderId)"><span>x</span></button>
+                                            </p>
+                                        </div>
+                                    </li>
+                }
+                </ul>
+            </div>
+        }
+
+    </Authorized>
+            <NotAuthorized>
+                <h2>Please Login to see this page</h2>
+            </NotAuthorized>
+</AuthorizeView>
 @code {
     private IList<Order> orders;
-    private async Task ChangeStatus(Order order)
-    {
-        order.iscompleted =! order.iscompleted;
-    }
-    private async Task CommitChanges()
-    {
-        //TODO: Make changes only to the orders that were changed
-        foreach (Order o in orders)
-        {
-            await orderService.UpdateOrderAsync(o);
-        }
-    }
+    private Order newOrderItem = new Order();
+
     protected override async Task OnInitializedAsync()
     {
         orders = await orderService.GetAllOrdersAsync();
+    }
+    private void SelectOrder(Order SelectedOrder)
+    {
+        newOrderItem = SelectedOrder;
+    }
+    private async Task RemoveOrder(int userId)
+    {
+        await orderService.DeleteOrderByIdAsync(userId);
+        NavMgr.NavigateTo("/AdminOrders",true);
+    }
+    private async Task UpdateUser(Order toBeUpdated)
+    {
+        await orderService.UpdateOrderAsync(toBeUpdated);
+        NavMgr.NavigateTo("/AdminOrders",true);
     }
 }

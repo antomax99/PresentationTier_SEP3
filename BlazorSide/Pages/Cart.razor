@@ -31,9 +31,9 @@ else
         <tbody>
         @foreach (Order o in orders)
         {
-            if (!o.iscompleted)
+            if (!o.isCompleted)
             {
-                foreach (Product p in o._products)
+                foreach (Product p in o.products)
                 {
                     <tr>
                         <td>@p.name</td> <td>@p.description</td> <td>@p.value</td> <td>@p.length|@p.width|@p.height</td>
@@ -58,7 +58,7 @@ else
 
     private async Task RemoveProductFromOrder(Order order, Product product)
     {
-        order._products.Remove(product);
+        order.products.Remove(product);
        await orderService.UpdateOrderAsync(order);
     }
     private async Task Purchase(Order order)

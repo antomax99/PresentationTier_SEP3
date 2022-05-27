@@ -10,7 +10,7 @@ namespace RESTClient;
 
 public class OrderHttpClientImpl : IOrderService
 {
-    private readonly int APPLICATION_IP=2172;
+    private readonly int APPLICATION_IP=8080;
     public async Task<IList<Order>> GetAllOrdersAsync()
     {
         using HttpClient client = new ();
@@ -26,6 +26,7 @@ public class OrderHttpClientImpl : IOrderService
         {
             PropertyNameCaseInsensitive = true
         })!;
+        Console.WriteLine(orders[0].ToString());
         return orders;
     }
 

@@ -6,35 +6,28 @@ public class Order
 
     public int orderId { get; set; }
     
-    public int clientId { get; set; }
-    public int Value{ get; set; }
+    public int customerId { get; set; }
+    public double price{ get; set; }
 
-    public IList<Product> _products{ get; set; }
+    public IList<Product> products{ get; set; }
 
     
-    public bool iscompleted { get; set; }
+    public bool isCompleted { get; set; }
     
     public Order() { }
     
-    public Order(int clientId)
+    public Order(int customerId)
     {
-        this.clientId = clientId;
+        this.customerId = customerId;
     }
 
-    public Order(IList<Product> products, int orderId, int clientId, int value, bool iscompleted)
+    public Order(IList<Product> products, int orderId, int customerId, int price, bool isCompleted)
     {
-        _products = products;
+        this.products = products;
         this.orderId = orderId;
-        this.clientId = clientId;
-        Value = value;
-        this.iscompleted = iscompleted;
+        this.customerId = customerId;
+        price = price;
+        this.isCompleted = isCompleted;
     }
-    public override string ToString()
-    {
-        return "Order{" +
-               "OrderId=" + orderId +
-               ", ClientId=" + clientId +
-               ", ISCompleted=" + iscompleted +
-               '}';
-    }
+
 }

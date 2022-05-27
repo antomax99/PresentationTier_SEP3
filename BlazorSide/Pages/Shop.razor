@@ -69,7 +69,7 @@
         orders = await _orderService.GetAllOrdersAsync();
         foreach (Order o in orders)
         {
-            if (!o.iscompleted)
+            if (!o.isCompleted)
             {
                 //In case of non filtered order list use Claims to get current user ID
                 //if(o.clientId == clientId){ _productService.AddProductToCart(product, o.orderId); }
