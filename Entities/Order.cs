@@ -26,7 +26,7 @@ public class Order
         this.products = products;
         this.orderId = orderId;
         this.customerId = customerId;
-        price = price;
+        this.price = price;
         this.isCompleted = isCompleted;
     }
 

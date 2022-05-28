@@ -7,7 +7,7 @@ using Contracts;
 using Entities;
 
 namespace RESTClient;
-
+//TODO: Change to be able to parse orders and the attached products
 public class OrderHttpClientImpl : IOrderService
 {
     private readonly int APPLICATION_IP=8080;

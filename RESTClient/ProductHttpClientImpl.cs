@@ -7,7 +7,7 @@ namespace RESTClient;
 
 public class ProductHttpClientImpl : IProductService
 {
-    private readonly int APPLICATION_IP=2172;
+    private readonly int APPLICATION_IP=8080;
     public async Task<IList<Product>> GetProductsAsync()
     {
         using HttpClient client = new ();
