@@ -30,11 +30,30 @@ public class OrderHttpClientImpl : IOrderService
         return orders;
     }
 
+    public async Task<IList<Order>> GetAllOrdersFromUser(int userID)
+    {
+        using HttpClient client = new ();
+        HttpResponseMessage response = await client.GetAsync($"http://localhost:{APPLICATION_IP}/orders/{userID}/user");
+        string content = await response.Content.ReadAsStringAsync();
+
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new Exception($"Error: {response.StatusCode}, {content}");
+        }
+
+        IList<Order> orders = JsonSerializer.Deserialize<IList<Order>>(content, new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        })!;
+        //Console.WriteLine(orders[0].ToString());
+        return orders;
+    }
+
     public async Task<Order> GetOrderById(int id)
     {
         
         using HttpClient client = new ();
-        HttpResponseMessage response = await client.GetAsync($"http://localhost:{APPLICATION_IP}/{id}/order");
+        HttpResponseMessage response = await client.GetAsync($"http://localhost:{APPLICATION_IP}/orders/{id}");
         string content = await response.Content.ReadAsStringAsync();
 
         if (!response.IsSuccessStatusCode)

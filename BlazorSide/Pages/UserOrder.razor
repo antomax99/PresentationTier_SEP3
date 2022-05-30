@@ -1,0 +1,77 @@
+@page "/UserOrder/{index:int}"
+@using Entities
+@using Contracts
+@inject IOrderService _orderService
+@inject IProductService _productService
+@inject NavigationManager _navMgr
+
+<h3>UserOrder</h3>
+
+@if (order == null)
+{
+    <p>
+        <em>Loading...</em>
+    </p>
+}
+else
+{
+    @if (order != null)
+    {
+        <div class="container">
+            <ul class="responsive-table">
+                <PageTitle>Order ID: @order.orderId</PageTitle>
+                                    <li class="table-header">
+                                                         <div class="col col-1">Name</div>
+                                                         <div class="col col-2">Brand</div>
+                                                         <div class="col col-3">Description</div>
+                                                         <div class="col col-4">Value</div>
+                                    </li>
+                <section class="content">
+                    <h2>@order.price</h2>
+                    @foreach (Product tableProduct in order.products)
+                    {                   
+                        <li class="table-row" @onclick="()=>SelectProduct(tableProduct)">
+                            <div class="col col-1">@tableProduct.name</div>
+                            <div class="col col-2">@tableProduct.brand</div>
+                            <div class="col col-3">@tableProduct.description</div>
+                            <div class="col col-4">@tableProduct.value</div>
+            
+                            <div class="col col-8">
+                                <p class="actions">
+                                    <button class="buttonD" @onclick="() => RemoveProductFromOrder(tableProduct.productId)"><span>x</span></button>
+                                </p>
+                            </div>
+                        </li>
+                    }
+                    <br/>
+                    <p>
+
+                    </p>
+                </section>
+            </ul>
+            </div>
+    }
+}
+@code {
+    [Parameter]
+    public int index { get; set; }
+    
+    private Product newProductItem = new Product();
+    
+    Order order = null;
+    protected override async Task OnInitializedAsync()
+    {
+        order = await _orderService.GetOrderById(index);
+    }
+    private void SelectProduct(Product selectedProduct)
+    {
+        newProductItem = selectedProduct;
+    }
+    private async Task RemoveProductFromOrder(int productId)
+    {
+        order.products.RemoveAt(order.products.Count);
+        await _orderService.UpdateOrderAsync(order);
+        //await _productService.RemoveProductFromOrder(productId,3);
+        _navMgr.NavigateTo(_navMgr.Uri,true);
+    }
+}

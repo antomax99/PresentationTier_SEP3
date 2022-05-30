@@ -7,6 +7,7 @@ public interface IOrderService
 {
     
     public Task<IList<Order>> GetAllOrdersAsync();
+    public Task<IList<Order>> GetAllOrdersFromUser(int userID);
     public Task<Order> GetOrderById(int id);
     public Task RequestPurchase (Order order);
     public Task AddOrderAsync(Order order);

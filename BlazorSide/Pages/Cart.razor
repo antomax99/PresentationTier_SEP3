@@ -2,7 +2,11 @@
 @using Entities
 @using Contracts
 @using System.Collections
-@inject IOrderService orderService
+@using BlazorSide.Authentification
+@inject IAuthService authService
+@inject IOrderService _orderService
+@inject IProductService _productService
+@inject NavigationManager _navMgr
 
 <AuthorizeView>
 <Authorized>
@@ -22,30 +26,41 @@ else if (orders.Count==0)
 }
 else
 {
-    <table class="table">
-        <thead>
-        <tr>
-            <th>Name</th> <th>Description</th> <th>Price</th> <th>Size:l|w|h</th> <th>Remove</th>
-        </tr>
-        </thead>
-        <tbody>
-        @foreach (Order o in orders)
+    <div class="container">
+     <ul class="responsive-table">
+    @foreach (Order o in orders)
         {
             if (!o.isCompleted)
             {
-                foreach (Product p in o.products)
-                {
-                    <tr>
-                        <td>@p.name</td> <td>@p.description</td> <td>@p.value</td> <td>@p.length|@p.width|@p.height</td>
-                        <td><button @onclick="()=>RemoveProductFromOrder(o,p)">X</button></td>
-                    </tr>
-                }
-                <button class="button" @onclick="()=>Purchase(o)">Pruchase</button>
-                break;
-            }
-        }
-        </tbody>
-    </table>
+                <li class="table-header">
+                    <div class="col col-1">Name</div>
+                    <div class="col col-2">Brand</div>
+                    <div class="col col-3">Description</div>
+                    <div class="col col-4">Value</div>
+                </li>
+    foreach (Product tableProduct in o.products)
+    {
+
+        
+        <li class="table-row" @onclick="()=>SelectProduct(tableProduct)">
+            <div class="col col-1">@tableProduct.name</div>
+            <div class="col col-2">@tableProduct.brand</div>
+            <div class="col col-3">@tableProduct.description</div>
+            <div class="col col-4">@tableProduct.value</div>
+            
+            <div class="col col-8">
+                <p class="actions">
+                    <button class="buttonD" @onclick="() => RemoveProductFromOrder(tableProduct.productId)"><span>x</span></button>
+                </p>
+            </div>
+        </li>
+    }
+    <button class="button" @onclick="()=>Purchase(o)">Pruchase</button>
+    break;
+    }
+    }
+</ul>
+</div>
 }
 </Authorized>
 <NotAuthorized>
@@ -54,20 +69,39 @@ else
 </AuthorizeView>
 
 @code {
+    
     private IList<Order> orders;
-
+    private Product newProductItem = new Product();
+    Order order = null;
+    
     private async Task RemoveProductFromOrder(Order order, Product product)
     {
         order.products.Remove(product);
-       await orderService.UpdateOrderAsync(order);
+       await _orderService.UpdateOrderAsync(order);
     }
     private async Task Purchase(Order order)
     {
-        await orderService.RequestPurchase(order);
+        await _orderService.RequestPurchase(order);
         //TODO: Create landing page for customer who made a purchase
     }
     protected override async Task OnInitializedAsync()
     {
-        orders = await orderService.GetAllOrdersAsync();
+        orders = await _orderService.GetAllOrdersFromUser(3);
+    //orders = await orderService.GetOrderById(@authService.GetAuthAsync().Id);
+    }
+    private void SelectProduct(Product selectedProduct)
+    {
+        newProductItem = selectedProduct;
+    }
+    private async Task RemoveProductFromOrder(int productId)
+    {
+        order.products.RemoveAt(order.products.Count);
+        await _orderService.UpdateOrderAsync(order);
+    //await _productService.RemoveProductFromOrder(productId,3);
+        _navMgr.NavigateTo(_navMgr.Uri,true);
+    }
+    private void OpenOrder(int id)
+    {
+        _navMgr.NavigateTo($"/UserOrder/{id}");
     }
 }

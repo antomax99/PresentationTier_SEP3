@@ -4,39 +4,32 @@ public class Product
 {
     public int productId { get; set; }
     public string name { get; set; }
+    
+    public string brand { get; set; }
     public string description { get; set; }
-    public string url { get; set; }
     public double value { get; set; }
-    public double weight { get; set; }
-    public double width { get; set; }
-    public double length { get; set; }
-    public double height { get; set; }
+
 
     public Product()
     {
     }
 
-    public Product(int productId, string name,string url,string description, double value, double weight)
+    public Product(int productId, string name,string brand,string description, double value)
     {
         this.productId = productId;
         this.name = name;
+        this.brand = brand;
         this.description = description;
-        this.url = url;
         this.value = value;
-        this.weight = weight;
-        
     }
 
-    public Product(string name,string url,string description, double value, double weight, double width, double length, double height)
+    public Product(string name,string brand,string description, double value)
     {
         this.name = name;
+        this.brand = brand;
         this.description = description;
-        this.url = url;
         this.value = value;
-        this.weight = weight;
-        this.width = width;
-        this.length = length;
-        this.height = height;
+
 
     }
 }

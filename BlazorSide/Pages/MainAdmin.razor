@@ -1,7 +1,26 @@
 @page "/MainAdmin"
 @inject NavigationManager navMgr
 <h3>MainAdmin</h3>
-<h4><a href="AdminUsers">Users</a></h4><h4><a href="AdminOrders">Orders</a></h4>
+<AuthorizeView>
+    <Authorized>
+        <div class="split left">
+          <div class="centered">
+            <h2><a href="AdminUsers">Manage Users</a></h2>
+            <p>Here you can manage all the users in the system</p>
+          </div>
+        </div>
+        
+        <div class="split right">
+          <div class="centered">
+            <h2><a href="AdminOrders">Manage Orders</a></h2>
+            <p>Here you can manage all the orders in the system</p>
+          </div>
+        </div>
+    </Authorized>
+            <NotAuthorized>
+                <h2>Please Login to see this page</h2>
+            </NotAuthorized>
+</AuthorizeView>
 @code {
     
 }

@@ -10,4 +10,5 @@ public interface IProductService
     public Task AddProductToCart(Product product, int orderId);
     public Task DeleteProductAsync(int id);
     public Task UpdateProductAsync(Product product);
+
 }
