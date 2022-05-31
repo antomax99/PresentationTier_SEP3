@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace Entities;
 
 /*
@@ -6,10 +8,15 @@ namespace Entities;
 public class User
 {
     public int userId { get; set; }
+    [Required, MaxLength(64)]
     public string userName { get; set; }
+    [Required, MaxLength(128)]
     public string password { get; set; }
+    [Required, MaxLength(64)]
     public string firstName { get; set; }
+    [Required, MaxLength(64)]
     public string lastName { get; set; }
+    [Required, MaxLength(128)]
     public string email { get; set; }
     public int SecurityLevel { get; set; }
 

@@ -2,8 +2,11 @@
 @using Entities
 @using Contracts
 @using System.Collections
+@using System.Runtime.CompilerServices
+@using System.Security.Claims
 @using BlazorSide.Authentification
 @inject IAuthService authService
+@inject IUserService _userService
 @inject IOrderService _orderService
 @inject IProductService _productService
 @inject NavigationManager _navMgr
@@ -71,9 +74,18 @@ else
 @code {
     
     private IList<Order> orders;
+    
+    [CascadingParameter]
+    public static Task<AuthenticationState> _authState { get; set; }
+    
+    private static ClaimsPrincipal? _user;
+    
+    
+    
     private Product newProductItem = new Product();
     Order order = null;
     
+
     private async Task RemoveProductFromOrder(Order order, Product product)
     {
         order.products.Remove(product);
@@ -86,7 +98,11 @@ else
     }
     protected override async Task OnInitializedAsync()
     {
-        orders = await _orderService.GetAllOrdersFromUser(3);
+        AuthenticationState authState = await _authState;
+        _user = authState.User;
+        Claim userName = _user.Claims.First(c => c.Type.Equals("userName"));
+        User? u = await _userService.GetUserByUsername(userName.Value);
+        orders = await _orderService.GetAllOrdersFromUser(u.userId);
     //orders = await orderService.GetOrderById(@authService.GetAuthAsync().Id);
     }
     private void SelectProduct(Product selectedProduct)

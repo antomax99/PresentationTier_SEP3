@@ -48,7 +48,7 @@ public class UserHttpClientImpl :IUserService
     public async Task<User> GetUserById(int id)
     {
         using HttpClient client = new ();
-        HttpResponseMessage response = await client.GetAsync($"http://localhost:{APPLICATION_IP}/users/{id}");
+        HttpResponseMessage response = await client.GetAsync($"http://localhost:{APPLICATION_IP}/user/{id}/retrieve");
         string content = await response.Content.ReadAsStringAsync();
 
         if (!response.IsSuccessStatusCode)
@@ -76,7 +76,7 @@ public class UserHttpClientImpl :IUserService
 
         StringContent usercontent = new(UserAsJson, Encoding.UTF8, "application/json");
         
-        HttpResponseMessage response = await client.PostAsync($"http://localhost:{APPLICATION_IP}/users/add",usercontent);
+        HttpResponseMessage response = await client.PostAsync($"http://localhost:{APPLICATION_IP}/user/add",usercontent);
        
         
         try
@@ -97,7 +97,7 @@ public class UserHttpClientImpl :IUserService
     public async Task DeleteAsync(int id)
     {
         using HttpClient client = new ();
-        HttpResponseMessage response = await client.DeleteAsync($"http://localhost:{APPLICATION_IP}/users/{id}/delete");
+        HttpResponseMessage response = await client.DeleteAsync($"http://localhost:{APPLICATION_IP}/user/{id}/delete");
         string content = await response.Content.ReadAsStringAsync();
 
         if (!response.IsSuccessStatusCode)
@@ -117,7 +117,7 @@ public class UserHttpClientImpl :IUserService
         string UserAsJson = JsonSerializer.Serialize(user,options);
         StringContent usercontent = new(UserAsJson, Encoding.UTF8, "application/json");
         
-        HttpResponseMessage response = await client.PutAsync($"http://localhost:{APPLICATION_IP}/users/update",usercontent);
+        HttpResponseMessage response = await client.PutAsync($"http://localhost:{APPLICATION_IP}/user/update",usercontent);
         string content = await response.Content.ReadAsStringAsync();
         /*
         if (!response.IsSuccessStatusCode)

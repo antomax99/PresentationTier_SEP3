@@ -30,7 +30,7 @@ public class ProductHttpClientImpl : IProductService
     public async Task<Product> GetProductById(int id)
     {
         using HttpClient client = new ();
-        HttpResponseMessage response = await client.GetAsync($"http://localhost:{APPLICATION_IP}/id/{id}/product");
+        HttpResponseMessage response = await client.GetAsync($"http://localhost:{APPLICATION_IP}/product/{id}/retrieve");
         string content = await response.Content.ReadAsStringAsync();
 
         if (!response.IsSuccessStatusCode)
@@ -76,7 +76,7 @@ public class ProductHttpClientImpl : IProductService
     public async Task DeleteProductAsync(int id)
     {
         using HttpClient client = new ();
-        HttpResponseMessage response = await client.GetAsync($"http://localhost:{APPLICATION_IP}/id/{id}/product/remove");
+        HttpResponseMessage response = await client.GetAsync($"http://localhost:{APPLICATION_IP}/product/{id}/delete");
         string content = await response.Content.ReadAsStringAsync();
 
         if (!response.IsSuccessStatusCode)
@@ -111,31 +111,4 @@ public class ProductHttpClientImpl : IProductService
         Console.WriteLine("UpdateProductAsync returned: " + returned); //Console line
     }
     
-    public async Task AddProductToCart(Product product, int orderId)
-    {
-        using HttpClient client = new ();
-        //CamelCase for application 
-        var options = new JsonSerializerOptions
-        {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-        };
-        string UserAsJson = JsonSerializer.Serialize(product,options);
-
-        StringContent usercontent = new(UserAsJson, Encoding.UTF8, "application/json");
-        
-        HttpResponseMessage response = await client.PostAsync($"http://localhost:{APPLICATION_IP}/product/{orderId}/addtocart",usercontent);
-        string content = await response.Content.ReadAsStringAsync();
-
-        if (!response.IsSuccessStatusCode)
-        {
-            throw new Exception($"Error: {response.StatusCode}, {content}");
-        }
-        //Returned order for debugging 
-        Order returned = JsonSerializer.Deserialize<Order>(content, new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        })!;
-        
-        Console.WriteLine("AddProductToCart returned: " + returned); //Console line
-    }
 }

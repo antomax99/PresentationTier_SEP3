@@ -33,7 +33,7 @@ public class OrderHttpClientImpl : IOrderService
     public async Task<IList<Order>> GetAllOrdersFromUser(int userID)
     {
         using HttpClient client = new ();
-        HttpResponseMessage response = await client.GetAsync($"http://localhost:{APPLICATION_IP}/orders/{userID}/user");
+        HttpResponseMessage response = await client.GetAsync($"http://localhost:{APPLICATION_IP}/order/retrieveprdocut/user/{userID}");
         string content = await response.Content.ReadAsStringAsync();
 
         if (!response.IsSuccessStatusCode)
@@ -53,7 +53,7 @@ public class OrderHttpClientImpl : IOrderService
     {
         
         using HttpClient client = new ();
-        HttpResponseMessage response = await client.GetAsync($"http://localhost:{APPLICATION_IP}/orders/{id}");
+        HttpResponseMessage response = await client.GetAsync($"http://localhost:{APPLICATION_IP}/order/{id}/retrieve");
         string content = await response.Content.ReadAsStringAsync();
 
         if (!response.IsSuccessStatusCode)
@@ -99,7 +99,7 @@ public class OrderHttpClientImpl : IOrderService
     public async Task DeleteOrderByIdAsync(int id)
     {
         using HttpClient client = new ();
-        HttpResponseMessage response = await client.GetAsync($"http://localhost:{APPLICATION_IP}/Order/{id}");
+        HttpResponseMessage response = await client.GetAsync($"http://localhost:{APPLICATION_IP}/order/{id}/delete");
         string content = await response.Content.ReadAsStringAsync();
 
         if (!response.IsSuccessStatusCode)
