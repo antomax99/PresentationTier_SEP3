@@ -24,10 +24,10 @@
             <div class="container">
                 <ul class="responsive-table">
                     <li class="table-header">
-                                         <div class="col col-1">Username<input type="text" minlength="3" maxlength="32" @bind="@newOrderItem.orderId" @oninput="@((e) => { newOrderItem.orderId=Convert.ToInt32(e.Value);})" /></div>
-                                         <div class="col col-2">Password<input type="text" minlength="3" maxlength="32" @bind="@newOrderItem.customerId" @oninput="@((e) => { newOrderItem.customerId=Convert.ToInt32(e.Value);})" /></div>
-                                         <div class="col col-3">FirsName<input type="text" minlength="3" maxlength="32" @bind="@newOrderItem.price" @oninput="@((e) => { newOrderItem.price=Convert.ToInt32(e.Value);})" /></div>
-                                        <!-- <div class="col col-4">LastName<input type="" minlength="3" maxlength="32" @bind="@newOrderItem.isCompleted" @oninput="@((e) => { newOrderItem.isCompleted=(bool)e.Value;})" /></div>-->
+                                         <div class="col col-1">ID<input type="text" minlength="3" maxlength="32" @bind="@newOrderItem.orderId" @oninput="@((e) => { newOrderItem.orderId=Convert.ToInt32(e.Value);})" /></div>
+                                         <div class="col col-2">customerId<input type="text" minlength="3" maxlength="32" @bind="@newOrderItem.customerId" @oninput="@((e) => { newOrderItem.customerId=Convert.ToInt32(e.Value);})" /></div>
+                                         <div class="col col-3">Price<input type="text" minlength="3" maxlength="32" @bind="@newOrderItem.price" @oninput="@((e) => { newOrderItem.price=Convert.ToInt32(e.Value);})" /></div>
+                                         <div class="col col-4">Completed<br/><input type="checkbox" minlength="3" maxlength="32" @bind="@newOrderItem.completed" @oninput="@((e) => { newOrderItem.completed=(bool)e.Value;})" /></div>
 
                                          <div class="col col-8">
                                             <p class="actions">
@@ -35,9 +35,6 @@
                                                     </p>
                                          </div>
                                      </li>
-     
-
-                    
 
                 @foreach (Order TableOrder in orders)
                 {                   
@@ -45,7 +42,7 @@
                                         <div class="col col-1">@TableOrder.orderId</div>
                                         <div class="col col-2">@TableOrder.customerId</div>
                                         <div class="col col-3">@TableOrder.price</div>
-                                        <div class="col col-4">@TableOrder.isCompleted</div>
+                                        <div class="col col-4">@TableOrder.completed</div>
 
                                         <div class="col col-8">
                                             <p class="actions">

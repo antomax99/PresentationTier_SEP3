@@ -76,7 +76,7 @@ public class ProductHttpClientImpl : IProductService
     public async Task DeleteProductAsync(int id)
     {
         using HttpClient client = new ();
-        HttpResponseMessage response = await client.GetAsync($"http://localhost:{APPLICATION_IP}/product/{id}/delete");
+        HttpResponseMessage response = await client.DeleteAsync($"http://localhost:{APPLICATION_IP}/product/{id}/delete");
         string content = await response.Content.ReadAsStringAsync();
 
         if (!response.IsSuccessStatusCode)
@@ -96,7 +96,7 @@ public class ProductHttpClientImpl : IProductService
         string productAsJson = JsonSerializer.Serialize(product,options);
         StringContent postcontent = new(productAsJson, Encoding.UTF8, "application/json");
         
-        HttpResponseMessage response = await client.PatchAsync($"http://localhost:{APPLICATION_IP}/product/update",postcontent);
+        HttpResponseMessage response = await client.PutAsync($"http://localhost:{APPLICATION_IP}/product/update",postcontent);
         string content = await response.Content.ReadAsStringAsync();
 
         if (!response.IsSuccessStatusCode)

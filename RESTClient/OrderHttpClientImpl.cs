@@ -26,7 +26,6 @@ public class OrderHttpClientImpl : IOrderService
         {
             PropertyNameCaseInsensitive = true
         })!;
-        Console.WriteLine(orders[0].ToString());
         return orders;
     }
 
@@ -45,7 +44,7 @@ public class OrderHttpClientImpl : IOrderService
         {
             PropertyNameCaseInsensitive = true
         })!;
-        //Console.WriteLine(orders[0].ToString());
+
         return orders;
     }
 
@@ -99,7 +98,7 @@ public class OrderHttpClientImpl : IOrderService
     public async Task DeleteOrderByIdAsync(int id)
     {
         using HttpClient client = new ();
-        HttpResponseMessage response = await client.GetAsync($"http://localhost:{APPLICATION_IP}/order/{id}/delete");
+        HttpResponseMessage response = await client.DeleteAsync($"http://localhost:{APPLICATION_IP}/order/{id}/delete");
         string content = await response.Content.ReadAsStringAsync();
 
         if (!response.IsSuccessStatusCode)
@@ -119,7 +118,7 @@ public class OrderHttpClientImpl : IOrderService
         string orderAsJson = JsonSerializer.Serialize(order,options);
         StringContent postcontent = new(orderAsJson, Encoding.UTF8, "application/json");
         
-        HttpResponseMessage response = await client.PatchAsync($"http://localhost:{APPLICATION_IP}/order/update",postcontent);
+        HttpResponseMessage response = await client.PutAsync($"http://localhost:{APPLICATION_IP}/order/update",postcontent);
         string content = await response.Content.ReadAsStringAsync();
 
         if (!response.IsSuccessStatusCode)

@@ -55,6 +55,7 @@ public class AuthServiceImpl : IAuthService
         return user;
     }
 
+    //TODO: Move check on application (T2)
     private static void ValidateLoginCredentials(string password, User? user)
     {
         if (user == null)

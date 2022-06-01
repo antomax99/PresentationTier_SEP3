@@ -33,7 +33,7 @@ else
      <ul class="responsive-table">
     @foreach (Order o in orders)
         {
-            if (!o.isCompleted)
+            if (!o.completed)
             {
                 <li class="table-header">
                     <div class="col col-1">Name</div>
@@ -43,9 +43,7 @@ else
                 </li>
     foreach (Product tableProduct in o.products)
     {
-
-        
-        <li class="table-row" @onclick="()=>SelectProduct(tableProduct)">
+        <li class="table-row">
             <div class="col col-1">@tableProduct.name</div>
             <div class="col col-2">@tableProduct.brand</div>
             <div class="col col-3">@tableProduct.description</div>
@@ -73,42 +71,33 @@ else
 
 @code {
     
-    private IList<Order> orders;
+    private IList<Order>? orders;
     
     [CascadingParameter]
-    public static Task<AuthenticationState> _authState { get; set; }
+    public static Task<AuthenticationState>? _authState { get; set; }
     
     private static ClaimsPrincipal? _user;
-    
     
     
     private Product newProductItem = new Product();
     Order order = null;
     
-
-    private async Task RemoveProductFromOrder(Order order, Product product)
-    {
-        order.products.Remove(product);
-       await _orderService.UpdateOrderAsync(order);
-    }
+    
     private async Task Purchase(Order order)
     {
-        await _orderService.RequestPurchase(order);
+        order.completed = true;
+        await _orderService.UpdateOrderAsync(order);
         //TODO: Create landing page for customer who made a purchase
     }
     protected override async Task OnInitializedAsync()
     {
-        AuthenticationState authState = await _authState;
-        _user = authState.User;
+        AuthenticationState authState = await _authState!;
+        _user=  authState.User;
         Claim userName = _user.Claims.First(c => c.Type.Equals("userName"));
         User? u = await _userService.GetUserByUsername(userName.Value);
-        orders = await _orderService.GetAllOrdersFromUser(u.userId);
-    //orders = await orderService.GetOrderById(@authService.GetAuthAsync().Id);
+        orders = await _orderService.GetAllOrdersFromUser(3);
     }
-    private void SelectProduct(Product selectedProduct)
-    {
-        newProductItem = selectedProduct;
-    }
+
     private async Task RemoveProductFromOrder(int productId)
     {
         order.products.RemoveAt(order.products.Count);
