@@ -71,7 +71,7 @@ else
 
 @code {
     
-    private IList<Order>? orders;
+    private IList<Order>? orders= new List<Order>();
     
     [CascadingParameter]
     public static Task<AuthenticationState>? _authState { get; set; }
@@ -91,18 +91,19 @@ else
     }
     protected override async Task OnInitializedAsync()
     {
-        AuthenticationState authState = await _authState!;
-        _user=  authState.User;
-        Claim userName = _user.Claims.First(c => c.Type.Equals("userName"));
-        User? u = await _userService.GetUserByUsername(userName.Value);
-        orders = await _orderService.GetAllOrdersFromUser(3);
+    //AuthenticationState authState = await _authState!;
+    //_user=  authState.User;
+    //Claim userName = _user.Claims.First(c => c.Type.Equals("userName"));
+    //User? u = await _userService.GetUserByUsername(userName.Value);
+       
+        orders.Add(await _orderService.GetOrderById(1));
+        Console.WriteLine(orders[0].completed);
     }
 
     private async Task RemoveProductFromOrder(int productId)
     {
         order.products.RemoveAt(order.products.Count);
         await _orderService.UpdateOrderAsync(order);
-    //await _productService.RemoveProductFromOrder(productId,3);
         _navMgr.NavigateTo(_navMgr.Uri,true);
     }
     private void OpenOrder(int id)
